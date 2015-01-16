@@ -30,7 +30,7 @@ function couplingVectorStreamline()
  
 %additional Parameters
 scale=.1; %scaling of the effective mass matrix ellipse
-int=20; %number of intervals used for the for loops
+int=7; %number of intervals used for the for loops
 ll=l1+l2; 
 lr=l3+l4; 
 
@@ -58,6 +58,8 @@ sz=size(X)
 
 U=zeros(sz(1), sz(2));
 V=zeros(sz(1), sz(2)); 
+U1=zeros(sz(1), sz(2)); 
+V1=zeros(sz(1), sz(2)); 
 size(U)
 
 j=1; % x
@@ -158,28 +160,45 @@ if(magn<1e-3 && magn2<rtot) %this check makes sure that the distance adheres to 
 
  [P,L]=eig(EMM1);
 
+L=L; 
+ 
 dotp1= dot(1/magn2*[x,y]',P(:,1));
 dotp2=dot(1/magn2*[x,y]',P(:,2));
 
 % waitforbuttonpress
 
 if(abs(dotp1)>.001 && dotp1>0)
-U(i,j)= P(1,1); 
-V(i,j)= P(2,1); 
+U(i,j)= 1/L(1,1)*P(1,1); 
+V(i,j)= 1/L(1,1)*P(2,1); 
+U1(i,j)= 1/L(2,2)*P(1,2); 
+V1(i,j)= 1/L(1,1)*P(2,2);
 end
 if(abs(dotp1)>.001 && dotp1<0)
-U(i,j)= -P(1,1); 
-V(i,j)= -P(2,1); 
+U(i,j)= 1/L(1,1)*-P(1,1); 
+V(i,j)= 1/L(1,1)*-P(2,1); 
+U1(i,j)= 1/L(2,2)*-P(1,2); 
+V1(i,j)= 1/L(2,2)*-P(2,2); 
 end
 if(abs(dotp2)>.001 && dotp2>0)
-U(i,j)= P(1,2); 
-V(i,j)= P(2,2); 
+U(i,j)= 1/L(2,2)*P(1,2); 
+V(i,j)= 1/L(2,2)*P(2,2); 
+U1(i,j)= 1/L(1,1)*P(1,1); 
+V1(i,j)= 1/L(1,1)*P(2,1); 
 end
 if(abs(dotp2)>.001 && dotp2<0)
-U(i,j)= -P(1,2); 
-V(i,j)= -P(2,2); 
+U(i,j)= 1/L(2,2)*-P(1,2); 
+V(i,j)= 1/L(2,2)*-P(2,2);  
+U1(i,j)= 1/L(1,1)*-P(1,1); 
+V1(i,j)= 1/L(1,1)*-P(2,1); 
 end
 
+cro= cross([0,0,1], [U(i,j),V(i,j),0]); 
+ dot3= dot(cro(1:2), [U1(i,j),V1(i,j)]); 
+
+if(dot3<0)
+U1(i,j)= -U1(i,j); 
+V1(i,j)= -V1(i,j); 
+end
 
 
 
@@ -187,7 +206,8 @@ else
    
    U(i,j)= 0; 
 V(i,j)= 0; 
-
+   U1(i,j)= 0; 
+V1(i,j)= 0; 
 end % end of operational point distance check
 
 
@@ -204,9 +224,11 @@ j=j+1;
  size(Y)
  size(U)
  size(V)
-streamslice(X,Y,U,V);
+% streamslice(X,Y,U,V);
 
+hold on
 quiver(X,Y,U,V)
+quiver(X,Y,U1,V1)
 
 
 
