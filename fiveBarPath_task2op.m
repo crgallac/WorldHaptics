@@ -37,20 +37,23 @@ ltot=rtot+rtot/3;
 
 
 %Path parameterization
-p_length=.15; %meter
+p_length=.1; %meter
 dur=1; % second ----> this will be made into a variable for later models. 
 
 a=4*p_length/(dur^2);  % this is the acceleration in the operational space assuming constant accel then decel to stop on the point
-acc=[1 0]; %acceleration . 
-v0=[0 0]; %velocity 
-z0=[.15 0]; %position
+rddot=[a 0]; %acceleration . 
+rdot0=[0 0]; %velocity 
+r0=[.18 0]; %position
+
+
 phi=pi/4; 
+
 
 Q=[cos(phi) sin(phi); -sin(phi) cos(phi);]; %The matrix rotating the acceleration into the operational space
 
-acc=(Q'*acc')'
-v0=(Q'*v0')'; 
-z0=(Q'*z0')'; 
+acc=(Q'*rddot')';
+v0=(Q'*rdot0')'; 
+z0=(Q'*r0')'
 
 dt=.01; %milliseconds
 i=1; 
@@ -63,19 +66,22 @@ r=zeros(dur/dt,2);
 
 th0=[0 0 0 0]; 
 
+%set initial array elements to initial values
  v(i,:)=v0; 
     z(i,:)=z0; 
     
- rdot(i,:)=(Q'*v(i,:)')' ;%this rotates the operational space coordingates into the cartesian coords
- r(i,:)= (Q'*z(i,:)')'; 
+ rdot(i,:)=rdot0;%this rotates the operational space coordingates into the cartesian coords
+ r(i,:)= r0; 
   
 
  for t=0:dt:dur
         
+
+     
     %%%%% KINEMATICS
     
-    x=z0(1); 
-    y=z0(2); 
+    x=z0(1);
+    y=z0(2);
     
            eta=atan2(y,x);  %calculates angle to end effector from given points
        lhat=sqrt(x^2+y^2); %calculates the distance to the end effector from the origin
@@ -135,11 +141,12 @@ x2_vec=[x2;y2] ;
 
 magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operational positions
 
+
   if(magn<1e-3) %this check makes sure that the distance adheres to the constraints that the left and right operation points be the same
 
 
     if(t==dur/2) 
-        acc=-acc; 
+        rddot=-rddot; 
     end
     
 %%%%%%Device Dynamics
@@ -159,44 +166,47 @@ magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operati
     R_inv=R\eye(2); 
     Rdot_inv=R_inv*Rdot*R_inv; 
     
+    %Dynamics in Operational space
     H=R_inv'*G'*M*G*R_inv\eye(2);
-    EMM=R_inv'*G'*M*G*R_inv; %%%For plotting purposes   %%%%%UNITS ARE WIERD
-    
-    Fa_in_v= (R_inv'*G'*M*G*Rdot_inv+R_inv'*G'*M*Gdot*R_inv)*Q;
+%     EMM=R_inv'*G'*M*G*R_inv; %%%For plotting purposes   %%%%%UNITS ARE WIERD
+%     
+    Fa_in_v=(R_inv'*G'*M*G*Rdot_inv+R_inv'*G'*M*Gdot*R_inv);
     
    Fa_c= R_inv'*G'*c;
    
-
-    
-    %%%%%%Operational Space trajectory
-    
-        %in cartesian space coordinates
-    v(i,1)=acc(1)*dt+v0(1); 
-    z(i,1)=acc(1)/2*dt^2+v0(1)*dt+z0(1); 
-    
-    
+   %Dynamics in task space
    
-        
-  
- 
-    %%%%%%Admissible Space trajectory (in cartesian frame)
+     H1= Q'*R_inv'*G'*M*G*R_inv*Q\eye(2);
+     EMM1=Q'*R_inv'*G'*M*G*R_inv*Q; %%%For plotting purposes   %%%%%UNITS ARE WIERD
+%      Fa_in_v1=Q'*(R_inv'*G'*M*G*Rdot_inv+R_inv'*G'*M*Gdot*R_inv)*Q;
+%      Fa_c1= Q'*R_inv'*G'*c; 
+      
+    %%%%%%Task Space trajectory
     
-     acc1= H*(-1)*(Fa_in_v*z0'+Fa_c);
-      acc1=Q'*acc1; 
-     acc(2)=acc1(2);      
-     v(i,2)=acc(2)*dt+v0(2); 
-     z(i,2)=acc(2)/2*dt^2+v0(2)*dt+z0(2); 
+        %in operational space coordinates
+    rdot(i,1)=rddot(1)*dt+r0(1); 
+    r(i,1)=rddot(1)/2*dt^2+rdot0(1)*dt+r0(1); 
+  
+        %in admissable space coordinates
+     acc1= H*(-1)*(Fa_in_v*rdot0'+Fa_c);
+     rddot(2)=acc1(2);      
+     rdot(i,2)=rddot(2)*dt+rdot0(2); 
+     r(i,2)=rddot(2)/2*dt^2+rdot0(2)*dt+r0(2); 
      
-  %%% in operational frame coordinates
-      rdot(i,:)= (Q'*v(i,:)')';
-    r(i,:)=(Q'*z(i,:)')';
+  %%% in cartesian frame coordinates
      
-%           waitforbuttonpress
+    v(i,:)= (Q'*rdot(i,:)')';
+    z(i,:)=(Q'*r(i,:)')';
+     
+
     %%%%
 
+    
+    rdot0=rdot(i,:); 
+    r0=r(i,:); 
+     
     v0=v(i,:); 
     z0=z(i,:); 
-     
 
   %%%%%%%%
 
@@ -208,7 +218,7 @@ magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operati
 %Diagonalize the effective mass matrix to get the principle directions and
 %the eigenvalues 
 
- [V,L]=eig(EMM);
+ [V,L]=eig(EMM1);
 
 % V=eye(2);
 % L=eye(2);
@@ -296,6 +306,9 @@ function X=drawEllipse(a,b,R,x)
    X(i,1)=y(1); 
    X(i,2)=y(2);
     end
+    
+  
+    
 end
 
 function X=drawDevice(x1_vec,xop1_vec,xop2_vec,x2_vec,d)
@@ -311,6 +324,7 @@ function X=drawDevice(x1_vec,xop1_vec,xop2_vec,x2_vec,d)
  X(5,:)=x2_vec';%second joint of the right serial manipulator
  X(6,:)=[d/2,0];%first joint of the right serial manipulator
 
+ 
 
 end
 
@@ -356,7 +370,7 @@ l1=.147; %link 1 of the left serial manipulator
   D=[-J1(:,2) J2(:,2)];
   
 
- invD1= [cos(th3 + th4) / l2 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)) sin(th3 + th4) / l2 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)); cos(th1 + th2) / l4 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)) sin(th1 + th2) / l4 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2));]
+ invD1= [cos(th3 + th4) / l2 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)) sin(th3 + th4) / l2 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)); cos(th1 + th2) / l4 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2)) sin(th1 + th2) / l4 / (sin(th1) * cos(th3 + th4) + sin(th2) * cos(th3 + th4) - sin(th3 + th4) * cos(th1 + th2));];
 
 
  Dhat=invD1*C; %solve for D^-1*C

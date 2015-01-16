@@ -28,19 +28,19 @@ map=[CNA(1:25)' R1' G1' B1'; CNA(26:50)' R2' G2' B2'];
 % hsv(128)
 
 %Dynamic Parameters 
-l1=.1; %link 1 of the left serial manipulator
-l2=.12;%link 2 of the left serial manipulator
-l3=.12;%link 1 of the right serial manipulator
-l4=.1;%link 2 of the right serial manipulator
-d=0.05; %distance between first revolute joints
-m1= .05; %mass of first link of the left serial manipulator
-m2=.05;%mass of second link of the left serial manipulator
-m3=.05;%mass of first link of the right serial manipulator
-m4=.05;%mass of second link of the right serial manipulator
-IG1= m1*l1^2/12; %moment of inertia about l1 center of mass
-IG2=m2*l2^2/12;%moment of inertia about l2 center of mass
-IG3=IG1;%moment of inertia about l3 center of mass
-IG4=IG2;%moment of inertia about l4 center of mass
+ l1=.147; %link 1 of the left serial manipulator
+ l2=.199;%link 2 of the left serial manipulator
+ l3=.147;%link 1 of the right serial manipulator
+ l4=.199;%link 2 of the right serial manipulator
+ d=0.0; %distance between first revolute joints
+ m1= .3046; %mass of first link of the left serial manipulator
+ m2=.047;%mass of second link of the left serial manipulator
+ m3=.3046;%mass of first link of the right serial manipulator
+ m4=.047;%mass of second link of the right serial manipulator
+ IG1= m1*l1^2/12; %moment of inertia about l1 center of mass
+ IG2=m2*l2^2/12;%moment of inertia about l2 center of mass
+ IG3=IG1;%moment of inertia about l3 center of mass
+ IG4=IG2;%moment of inertia about l4 center of mass
 
 %additional Parameters
 scale=.1; %scaling of the effective mass matrix ellipse
