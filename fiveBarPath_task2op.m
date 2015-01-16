@@ -53,7 +53,7 @@ Q=[cos(phi) sin(phi); -sin(phi) cos(phi);]; %The matrix rotating the acceleratio
 
 acc=(Q'*rddot')';
 v0=(Q'*rdot0')'; 
-z0=(Q'*r0')'
+z0=(Q'*r0')';
 
 dt=.01; %milliseconds
 i=1; 
