@@ -21,6 +21,9 @@ function couplingVectorStreamline()
  Q=eye(2); 
  phi=0; 
  
+ROT= [cos(pi/4) sin(pi/4); -sin(pi/4) cos(pi/4);]; 
+
+% waitforbuttonpress
 
   l=[l1,l2,l3,l4]; 
  m=[m1,m2,m3,m4]; 
@@ -30,7 +33,7 @@ function couplingVectorStreamline()
  
 %additional Parameters
 scale=.1; %scaling of the effective mass matrix ellipse
-int=7; %number of intervals used for the for loops
+int=10; %number of intervals used for the for loops
 ll=l1+l2; 
 lr=l3+l4; 
 
@@ -61,6 +64,14 @@ V=zeros(sz(1), sz(2));
 U1=zeros(sz(1), sz(2)); 
 V1=zeros(sz(1), sz(2)); 
 size(U)
+
+
+UC=zeros(sz(1), sz(2));
+VC=zeros(sz(1), sz(2)); 
+UC1=zeros(sz(1), sz(2)); 
+VC1=zeros(sz(1), sz(2)); 
+UCOUP=zeros(sz(1), sz(2));
+VCOUP=zeros(sz(1), sz(2));
 
 j=1; % x
 i=1; % y 
@@ -159,9 +170,13 @@ if(magn<1e-3 && magn2<rtot) %this check makes sure that the distance adheres to 
 %% Streamlines
 
  [P,L]=eig(EMM1);
-
-L=L; 
  
+% norm(P(:,2),2)
+% pause(.5)
+%  P(:,1)= P(:,1)/norm(P(:,1),2); 
+%  P(:,2)= P(:,2)/norm(P(:,2),2); 
+L=1./L; 
+% L=eye(2); 
 dotp1= dot(1/magn2*[x,y]',P(:,1));
 dotp2=dot(1/magn2*[x,y]',P(:,2));
 
@@ -171,36 +186,54 @@ if(abs(dotp1)>.001 && dotp1>0)
 U(i,j)= 1/L(1,1)*P(1,1); 
 V(i,j)= 1/L(1,1)*P(2,1); 
 U1(i,j)= 1/L(2,2)*P(1,2); 
-V1(i,j)= 1/L(1,1)*P(2,2);
+V1(i,j)= 1/L(2,2)*P(2,2);
+
 end
 if(abs(dotp1)>.001 && dotp1<0)
 U(i,j)= 1/L(1,1)*-P(1,1); 
 V(i,j)= 1/L(1,1)*-P(2,1); 
 U1(i,j)= 1/L(2,2)*-P(1,2); 
 V1(i,j)= 1/L(2,2)*-P(2,2); 
+
 end
 if(abs(dotp2)>.001 && dotp2>0)
 U(i,j)= 1/L(2,2)*P(1,2); 
 V(i,j)= 1/L(2,2)*P(2,2); 
 U1(i,j)= 1/L(1,1)*P(1,1); 
 V1(i,j)= 1/L(1,1)*P(2,1); 
+
 end
 if(abs(dotp2)>.001 && dotp2<0)
 U(i,j)= 1/L(2,2)*-P(1,2); 
 V(i,j)= 1/L(2,2)*-P(2,2);  
 U1(i,j)= 1/L(1,1)*-P(1,1); 
 V1(i,j)= 1/L(1,1)*-P(2,1); 
+
 end
 
 cro= cross([0,0,1], [U(i,j),V(i,j),0]); 
  dot3= dot(cro(1:2), [U1(i,j),V1(i,j)]); 
-
+ 
+ 
 if(dot3<0)
 U1(i,j)= -U1(i,j); 
 V1(i,j)= -V1(i,j); 
+
 end
 
 
+AZE=ROT*[U(i,j) V(i,j); U1(i,j) V1(i,j);]'*ROT'; 
+
+UC(i,j)=AZE(1,1); 
+VC(i,j)=AZE(2,1); 
+UC1(i,j)=AZE(1,2); 
+VC1(i,j)=AZE(2,2); 
+
+UCOUP(i,j)= UC(i,j)+UC1(i,j);
+VCOUP(i,j)= VC(i,j)+VC1(i,j); 
+
+% dot([UC(i,j) VC(i,j)], [UC1(i,j) VC1(i,j)])
+% dot([U(i,j) V(i,j)], [U1(i,j) V1(i,j)])
 
 else
    
@@ -208,6 +241,13 @@ else
 V(i,j)= 0; 
    U1(i,j)= 0; 
 V1(i,j)= 0; 
+
+  UC(i,j)= 0; 
+VC(i,j)= 0; 
+   UC1(i,j)= 0; 
+VC1(i,j)= 0; 
+
+
 end % end of operational point distance check
 
 
@@ -220,17 +260,32 @@ j=j+1;
  
  figure
 
- size(X)
- size(Y)
- size(U)
- size(V)
+%  size(X)
+%  size(Y)
+%  size(U)
+%  size(V)
+
+
+%Similarity transformation
+
+% L
+% R*L*R'
+
+
+
+
 % streamslice(X,Y,U,V);
 
 hold on
 quiver(X,Y,U,V)
 quiver(X,Y,U1,V1)
+daspect([1,1,1])
 
+figure
+hold on
 
+quiver(X,Y,UCOUP,VCOUP); 
+daspect([1,1,1])
 
 end
 
