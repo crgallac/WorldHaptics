@@ -1,4 +1,4 @@
-function [Wnet]=fiveBarPath()
+function [ r, rdot, rddot, F,dr, W, a]=fiveBarPath_task2op_function(p_length, dur, phi, offset, dt, rdot0)
 
 %% Dynamic Parameters 
 global l1 l2 l3 l4 d m1 m2 m3 m4 IG1 IG2 IG3 IG4
@@ -35,19 +35,21 @@ ltot=rtot+rtot/3;
 
 
 %% Input Parameters
-p_length=.1; %meter
-dur=.4; % second ----> this will be made into a variable for later models. 
-%%% this 0.4 seconds is approximately constant for ballistic trajectories 
-phi=pi/2; 
-offset=[0.13 0.13]'; % in the operation space
-dt=.001; %seconds
+% p_length=.1; %meter
+% dur=.34; % second ----> this will be made into a variable for later models. 
+% %%% this 0.4 seconds is approximately constant for ballistic trajectories 
+% phi=pi/2; 
+% offset=[0.0 0.2]'; % in the operation space
+% dt=.001; %seconds
+% rdot0=[0 0]; %velocity 
 
-
+figure
 
 a=4*p_length/(dur^2);  % this is the acceleration in the operational space assuming constant accel then decel to stop on the point
+% waitforbuttonpress
+
 
 rddot=[a 0]; %acceleration . 
-rdot0=[0 0]; %velocity 
 r0=[0 0]; %position
 
 Q=[cos(phi) sin(phi); -sin(phi) cos(phi);]; %The matrix rotating the acceleration into the operational space
@@ -56,16 +58,20 @@ acc=(Q'*rddot')'; %acceleration in the cartesian framse
 v0=(Q'*rdot0')'; %velocity in the cartesian frame
 z0=(Q'*r0')'+offset';
 
+sz=int8(dur/dt);
+
 %velocity and position in cartesian coordinates
-v=zeros(dur/dt,2);%initialize arrays
-z=zeros(dur/dt,2); 
+v=zeros(sz+1,2);%initialize arrays
+z=zeros(sz+1,2); 
 
 %velocity and position in operation coordinates
-rdot=zeros(dur/dt,2);
-r=zeros(dur/dt,2); 
+rdot=zeros(sz+1,2);
+r=zeros(sz+1,2); 
 
 %Work done in the admissable space
-W=zeros(dur/dt,2); 
+W=zeros(sz+1,2); 
+F=zeros(sz+1,2); 
+dr=zeros(sz+1,2); 
 
 th0=[0 0 0 0]; 
 
@@ -78,10 +84,13 @@ i=1;
   %set initial array elements to initial values
  v(i,:)=v0; 
     z(i,:)=z0; 
-    
+  
+  W(i,:)=[0 0]; 
+  F(i,:)=[0 0]; 
+  dr(i,:)=[0 0];
 
  for t=0:dt:dur
-        
+       
 %% KINEMATICS
      
     %%%%% KINEMATICS
@@ -209,15 +218,17 @@ magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operati
      F1= Mstar(1,2)*rddot(1);
      F2= Fa_in_v(2)+Fa_c(2);
      
+     F(i+1,:)=[F1, F2]; 
+     
 %      waitforbuttonpress
      
      %%% Work 
-     dr=r(i+1,:)-r0;
+     dr(i+1,:)=r(i+1,:)-r0;
      
      W1= abs(F1*dr(2)); 
      W2= abs(F2*dr(2)); 
      
-     W(i,:)= [W1 W2]; 
+     W(i+1,:)= [W1 W2]; 
      
 %      waitforbuttonpress
   %%% in cartesian frame coordinates
@@ -306,19 +317,13 @@ end
 
 end
  i=i+1;
-%  pause(.01);
+ pause(.0001);
 %  waitforbuttonpress; 
  end
  
- Wnet=[0 0]; 
- for i=1:(dur/dt)
- 
-     Wnet= Wnet+W(i,:); 
-     
- end
- 
- 
- ratio= Wnet(1)/Wnet(2) %ratio of the forces resulting from the acceleration to the forces resulting from the velocity
+% waitforbuttonpress
+ close 
+%  Wratio= Wnet(1)/Wnet(2) %ratio of the forces resulting from the acceleration to the forces resulting from the velocity
  
 end
     

@@ -1,4 +1,4 @@
-function [COUP1, COUP]= couplingVectorStreamline()
+function couplingVectorStreamline()
 
 
 
@@ -33,7 +33,7 @@ ROT= [cos(pi/4) sin(pi/4); -sin(pi/4) cos(pi/4);];
  
 %additional Parameters
 scale=.1; %scaling of the effective mass matrix ellipse
-int=202; %number of intervals used for the for loops
+int=6; %number of intervals used for the for loops
 ll=l1+l2; 
 lr=l3+l4; 
 
@@ -70,8 +70,8 @@ UC=zeros(sz(1), sz(2));
 VC=zeros(sz(1), sz(2)); 
 UC1=zeros(sz(1), sz(2)); 
 VC1=zeros(sz(1), sz(2)); 
-COUP=zeros(sz(1), sz(2));
-
+UCOUP=zeros(sz(1), sz(2));
+VCOUP=zeros(sz(1), sz(2));
 
 j=1; % x
 i=1; % y 
@@ -175,8 +175,8 @@ if(magn<1e-3 && magn2<rtot) %this check makes sure that the distance adheres to 
 % pause(.5)
 %  P(:,1)= P(:,1)/norm(P(:,1),2); 
 %  P(:,2)= P(:,2)/norm(P(:,2),2); 
-% L=L_sigma; 
-L=eye(2); 
+L=L_sigma; 
+% L=eye(2); 
 dotp1= dot(1/magn2*[x,y]',P(:,1));
 dotp2=dot(1/magn2*[x,y]',P(:,2));
 
@@ -225,17 +225,16 @@ end
 AZE=ROT*L_sigma*ROT'; 
 PZE=ROT*[U(i,j) V(i,j); U1(i,j) V1(i,j)]'; 
 
-COUP(i,j)= abs(AZE(1,2));
+UC(i,j)=1/AZE(1,1)*PZE(1,1); 
+VC(i,j)=1/AZE(1,1)*PZE(2,1);
+UC1(i,j)=1/AZE(2,2)*PZE(1,2); 
+VC1(i,j)=1/AZE(2,2)*PZE(2,2); 
 
+% UCOUP(i,j)= UC(i,j)+UC1(i,j);
+% VCOUP(i,j)= VC(i,j)+VC1(i,j); 
 
-UC(i,j)=AZE(1,1)*PZE(1,1); 
-VC(i,j)=AZE(1,1)*PZE(2,1);
-UC1(i,j)=AZE(2,2)*PZE(1,2); 
-VC1(i,j)=AZE(2,2)*PZE(2,2); 
-
-
-% waitforbuttonpress
-
+% dot([UC(i,j) VC(i,j)], [UC1(i,j) VC1(i,j)])
+% dot([U(i,j) V(i,j)], [U1(i,j) V1(i,j)])
 
 else
    
@@ -249,7 +248,7 @@ VC(i,j)= 0;
    UC1(i,j)= 0; 
 VC1(i,j)= 0; 
 
-COUP(i,j)=NaN; 
+
 end % end of operational point distance check
 
 
@@ -279,30 +278,25 @@ j=j+1;
 % streamslice(X,Y,U,V);
 
 hold on
-
-COUP1=log(COUP); 
-% COUP1=log(COUP); 
-contourf(X,Y,COUP1,'LineColor', 'none');
-
-daspect([1,1,1])
-
 % streamslice(X,Y,U,V)
 % streamslice(X,Y,U1,V1,'g')
-h=streamslice(X,Y,UC,VC);
-% h=streamslice(X,Y,UC1,VC1)
-set(h,'color','k'); 
-% quiver(X,Y,UC1,VC1,'g')
+quiver(X,Y,U,V)
+quiver(X,Y,U1,V1,'g')
 daspect([1,1,1])
 xlabel('x(m)')
 ylabel('y(m)')
 
 
 
-% figure
+figure
 hold on
-
-
-
+% streamslice(X,Y,U,V)
+% streamslice(X,Y,U1,V1,'g')
+quiver(X,Y,UC,VC)
+quiver(X,Y,UC1,VC1,'g')
+daspect([1,1,1])
+xlabel('x(m)')
+ylabel('y(m)')
 
 
 end

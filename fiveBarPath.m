@@ -44,7 +44,7 @@ a=4*p_length/(dur^2);  % this is the acceleration in the operational space assum
 acc=[1 0]; %acceleration . 
 v0=[0 0]; %velocity 
 z0=[.15 0]; %position
-phi=pi/4; 
+phi=0; 
 
 Q=[cos(phi) sin(phi); -sin(phi) cos(phi);]; %The matrix rotating the acceleration into the operational space
 
