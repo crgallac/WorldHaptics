@@ -14,7 +14,7 @@ rdot0=[0 0]; %velocity
  
 
 
-        durArr=[.36 .4 .44];
+        durArr=[.36 .4 .44];%%%%%%change back
         phiArr=[pi/2 pi/4 0];
         
      
@@ -22,8 +22,8 @@ rdot0=[0 0]; %velocity
        szPhi= size(phiArr);
        
        
-numOfAcc= szDur(2);
-numOfAng= szPhi(2);
+numOfAcc= szDur(1,2);
+numOfAng= szPhi(1,2);
 
 
 
@@ -33,12 +33,15 @@ for i=1:numOfAcc
 
 dur=durArr(1,i);
 phi=phiArr(1,j);
+% waitforbuttonpress
 
  sz= int8(dur/dt);
 
 data= {zeros(sz+1,2),zeros(sz+1,2),zeros(sz+1,2),zeros(sz+1,2),zeros(sz+1,2),zeros(sz+1,2), 0, 0, 0, [0 0] };
 
 [r, rdot, rddot, F, dr, W, a]= fiveBarPath_task2op_function(p_length, dur, phi, offset, dt, rdot0);
+
+
 
 data{1}=r; 
 data{2}=rdot;

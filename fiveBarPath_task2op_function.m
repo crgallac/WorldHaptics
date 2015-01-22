@@ -43,7 +43,7 @@ ltot=rtot+rtot/3;
 % dt=.001; %seconds
 % rdot0=[0 0]; %velocity 
 
-figure
+% figure
 
 a=4*p_length/(dur^2);  % this is the acceleration in the operational space assuming constant accel then decel to stop on the point
 % waitforbuttonpress
@@ -225,10 +225,12 @@ magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operati
      %%% Work 
      dr(i+1,:)=r(i+1,:)-r0;
      
-     W1= abs(F1*dr(2)); 
-     W2= abs(F2*dr(2)); 
+     W1= F1*dr(2); 
+     W2= F2*dr(2); 
      
      W(i+1,:)= [W1 W2]; 
+     
+
      
 %      waitforbuttonpress
   %%% in cartesian frame coordinates
@@ -283,41 +285,41 @@ magn=norm(xop2_vec-xop1_vec,2); %the distance between the left and right operati
 
  %%%%%%%%%%%%%%%%%%%%%%%%% PLOTTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Y= drawDevice(x1_vec, xop1_vec,xop2_vec, x2_vec,d);
- X= drawEllipse(a,b,R,xop1_vec);
+%  Y= drawDevice(x1_vec, xop1_vec,xop2_vec, x2_vec,d);
+%  X= drawEllipse(a,b,R,xop1_vec);
 
 
 %Check to ensure that the configuration is a real one the device can
 %acheive
- if(imag(X(:,1))==0)
-    
-%PLOT THE DEVICE 
-
-% % % %  subplot 121
-  hold on;  
-  axis([-ltot ltot -ltot ltot]) %sets the axes to be displayed 
-  daspect([1 1 1]) %makes sure it's square
-  cla
-%   cla(s1); %clears the subplot 121 each time so that the device is animated
-plot(X(:,1), X(:,2), 'b-') %plot the mass ellipse 
-text(-.1,-.23,['P op = (', num2str(r(i+1,1)),',',num2str(r(i+1,2)),')'],'FontSize',9) %display the operational point
-plot(Y(:,1), Y(:,2), 'r--o') %plot the device by drawing both the left and right device. It is important to do this to ensure that the device is in a real configuration
-plot([-d/2,d/2],[0,0], 'g--') % plot the line which represents the distance between the pair of first revolute joints. 
-plot(x,y,'m--x', 'markersize', 15) %plots the operation point
-plot(0,0,'o', 'markersize', 5, 'markerfacecolor','c'); %plots the origin    
- 
-% % % end
-% % % % end %this is the end of the iff statment to check for 
-%  waitforbuttonpress;
-
-
-   
-    
-end
+%  if(imag(X(:,1))==0)
+%     
+% %PLOT THE DEVICE 
+% 
+% % % % %  subplot 121
+%   hold on;  
+%   axis([-ltot ltot -ltot ltot]) %sets the axes to be displayed 
+%   daspect([1 1 1]) %makes sure it's square
+%   cla
+% %   cla(s1); %clears the subplot 121 each time so that the device is animated
+% plot(X(:,1), X(:,2), 'b-') %plot the mass ellipse 
+% text(-.1,-.23,['P op = (', num2str(r(i+1,1)),',',num2str(r(i+1,2)),')'],'FontSize',9) %display the operational point
+% plot(Y(:,1), Y(:,2), 'r--o') %plot the device by drawing both the left and right device. It is important to do this to ensure that the device is in a real configuration
+% plot([-d/2,d/2],[0,0], 'g--') % plot the line which represents the distance between the pair of first revolute joints. 
+% plot(x,y,'m--x', 'markersize', 15) %plots the operation point
+% plot(0,0,'o', 'markersize', 5, 'markerfacecolor','c'); %plots the origin    
+%  
+% % % % end
+% % % % % end %this is the end of the iff statment to check for 
+% %  waitforbuttonpress;
+% 
+% 
+%    
+%     
+% end
 
 end
  i=i+1;
- pause(.0001);
+%  pause(.0001);
 %  waitforbuttonpress; 
  end
  
