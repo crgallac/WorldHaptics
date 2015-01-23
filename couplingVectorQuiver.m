@@ -280,8 +280,8 @@ j=j+1;
 hold on
 % streamslice(X,Y,U,V)
 % streamslice(X,Y,U1,V1,'g')
-quiver(X,Y,U,V)
-quiver(X,Y,U1,V1,'g')
+quiver(X,Y,U,V,'k')
+quiver(X,Y,U1,V1,'Color',[.8 .8 .8])
 daspect([1,1,1])
 xlabel('x(m)')
 ylabel('y(m)')
@@ -292,8 +292,8 @@ figure
 hold on
 % streamslice(X,Y,U,V)
 % streamslice(X,Y,U1,V1,'g')
-quiver(X,Y,UC,VC)
-quiver(X,Y,UC1,VC1,'g')
+quiver(X,Y,UC,VC,'k')
+quiver(X,Y,UC1,VC1,'Color',[.8 .8 .8])
 daspect([1,1,1])
 xlabel('x(m)')
 ylabel('y(m)')

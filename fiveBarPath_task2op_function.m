@@ -36,7 +36,7 @@ ltot=rtot+rtot/3;
 
 %% Input Parameters
 % p_length=.1; %meter
-% dur=.34; % second ----> this will be made into a variable for later models. 
+% dur=.44; % second ----> this will be made into a variable for later models. 
 % %%% this 0.4 seconds is approximately constant for ballistic trajectories 
 % phi=pi/2; 
 % offset=[0.0 0.2]'; % in the operation space
@@ -45,7 +45,7 @@ ltot=rtot+rtot/3;
 
 % figure
 
-a=4*p_length/(dur^2);  % this is the acceleration in the operational space assuming constant accel then decel to stop on the point
+a=4*p_length/(dur^2) ; % this is the acceleration in the operational space assuming constant accel then decel to stop on the point
 % waitforbuttonpress
 
 

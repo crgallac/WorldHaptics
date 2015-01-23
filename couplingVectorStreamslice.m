@@ -1,4 +1,4 @@
-function [COUP1, COUP]= couplingVectorStreamline()
+function [COUP1, COUP]= couplingVectorStreamslice(mycmap)
 
 
 
@@ -33,7 +33,7 @@ ROT= [cos(pi/4) sin(pi/4); -sin(pi/4) cos(pi/4);];
  
 %additional Parameters
 scale=.1; %scaling of the effective mass matrix ellipse
-int=202; %number of intervals used for the for loops
+int=61; %number of intervals used for the for loops
 ll=l1+l2; 
 lr=l3+l4; 
 
@@ -282,8 +282,9 @@ hold on
 
 COUP1=log(COUP); 
 % COUP1=log(COUP); 
-contourf(X,Y,COUP1,'LineColor', 'none');
-
+h0=contourf(X,Y,COUP1,'LineColor', 'none');
+set(gcf,'Colormap',flipud( gray))
+% shading interp
 daspect([1,1,1])
 
 % streamslice(X,Y,U,V)
@@ -292,15 +293,14 @@ h=streamslice(X,Y,UC,VC);
 % h=streamslice(X,Y,UC1,VC1)
 set(h,'color','k'); 
 % quiver(X,Y,UC1,VC1,'g')
-daspect([1,1,1])
+% daspect([1,1,1])
 xlabel('x(m)')
 ylabel('y(m)')
 
 
 
 % figure
-hold on
-
+% hold on
 
 
 

@@ -2,5 +2,5 @@ resultsScript
 resultsScriptReverseDirection
 resultsScriptZeroAcceleration
 
-% dataprocessingIPvPhi
-dataprocessingWvPhi
+dataprocessingIPvPhi
+% dataprocessingWvPhi
