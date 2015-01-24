@@ -1,6 +1,6 @@
 resultsScript
 resultsScriptReverseDirection
-resultsScriptZeroAcceleration
+% resultsScriptZeroAcceleration
 
 dataprocessingIPvPhi
 % dataprocessingWvPhi

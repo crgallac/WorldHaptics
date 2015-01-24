@@ -14,7 +14,7 @@ rdot0=[0 0]; %velocity
  
 
 
-        durArr=[.36 .4 .44];%%%%%%change back
+        durArr=[.9];%%%%%%change back
         phiArr=[pi/2 pi/4 0];
         
      
@@ -22,7 +22,7 @@ rdot0=[0 0]; %velocity
        szPhi= size(phiArr);
        
        
-numOfAcc= szDur(1,2);
+numOfAcc= 1% szDur(1,2);
 numOfAng= szPhi(1,2);
 
 

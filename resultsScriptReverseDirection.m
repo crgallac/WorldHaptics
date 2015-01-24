@@ -14,7 +14,7 @@ rdot0=[0 0]; %velocity
  
 offsetArr=[0 .0707 .1; .3 .2707 .2;]; 
     
-        durArr=[.36 .4 .44];
+        durArr=[.9];
 %         rdot0Arr=p_length./durArr
         phiArr=[pi+pi/2 pi+pi/4 pi];
         
@@ -23,7 +23,7 @@ offsetArr=[0 .0707 .1; .3 .2707 .2;];
        szPhi= size(phiArr);
        
        
-numOfAcc= szAcc(2);
+numOfAcc= 1 %szAcc(2);
 numOfAng= szPhi(2);
 
 
